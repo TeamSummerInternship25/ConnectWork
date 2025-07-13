@@ -1,0 +1,103 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Production builds
+.next/
+out/
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Test and development folders (DO NOT UPLOAD)
+develop/
+Step up/
+test/
+test(Not include project)/
+docx/
+
+# Document files
+*.docx
+*.doc
+*.pdf
+*.ppt
+*.pptx
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Database
+*.sqlite
+*.db
+
+# Prisma
+prisma/migrations/dev.db*
+
+# Next.js
+.next/
+out/
+
+# Vercel
+.vercel
+
+# EXCLUDE ACTUAL IMPLEMENTATION CODE (for development simulation)
+# Only keep skeleton structure and config files
+client/src/app/auth/
+client/src/app/speaker/
+client/src/app/audience/
+client/src/app/organizer/
+client/src/app/analytics/
+client/src/components/ui/
+client/src/components/DiscussionPanel.tsx
+client/src/contexts/
+client/src/hooks/useSocket.ts
+server/src/routes/auth.ts
+server/src/routes/upload.ts
+server/src/routes/presentations.ts
+server/src/routes/quiz.ts
+server/src/routes/discussions.ts
+server/src/routes/analytics.ts
+server/src/services/xfyunAiService.ts
+server/src/services/fileProcessingService.ts
+server/src/middleware/auth.ts
+server/prisma/schema.prisma

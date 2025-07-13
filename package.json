@@ -1,0 +1,40 @@
+{
+  "name": "popquiz",
+  "version": "1.0.0",
+  "description": "AI-powered pop quiz system for live presentations",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "server:dev": "cd server && npm run dev",
+    "client:dev": "cd client && npm run dev",
+    "build": "npm run client:build && npm run server:build",
+    "client:build": "cd client && npm run build",
+    "server:build": "cd server && npm run build",
+    "start": "cd server && npm start",
+    "test": "npm run client:test && npm run server:test",
+    "client:test": "cd client && npm test",
+    "server:test": "cd server && npm test",
+    "setup": "npm install && cd client && npm install && cd ../server && npm install",
+    "clean": "rm -rf node_modules client/node_modules server/node_modules",
+    "fresh-install": "npm run clean && npm run setup"
+  },
+  "keywords": [
+    "quiz",
+    "ai",
+    "education",
+    "presentation",
+    "real-time"
+  ],
+  "author": "PopQuiz Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "dependencies": {
+    "axios": "^1.10.0"
+  }
+}
