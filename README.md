@@ -53,14 +53,6 @@ PopQuiz运行成功时会显示：
 - ✅ Socket.IO 服务已初始化
 - ✅ AI 服务已初始化
 
-## 技术栈总览
-
-- **前端**: Next.js 14, React 18, TypeScript, Tailwind CSS, Socket.io-client, Chart.js
-- **后端**: Node.js, Express, TypeScript, Prisma ORM, PostgreSQL, Socket.io
-- **AI 服务**: 讯飞星火 API
-- **文件处理**: pdf-parse, mammoth, multer
-- **开发工具**: VS Code, Git, GitHub, Postman
-
 
 ## 项目亮点
 
