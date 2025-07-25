@@ -1,0 +1,207 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ORGANIZER
+  SPEAKER
+  AUDIENCE
+}
+
+enum QuizStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum FeedbackType {
+  TOO_FAST
+  TOO_SLOW
+  BORING
+  POOR_QUESTIONS
+  GENERAL
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organizedPresentations Presentation[] @relation("OrganizerPresentations")
+  speakerPresentations   Presentation[] @relation("SpeakerPresentations")
+  audienceParticipations PresentationAudience[]
+  quizAnswers           QuizAnswer[]
+  feedbacks             Feedback[]
+  discussionComments    DiscussionComment[]
+
+  @@map("users")
+}
+
+model Presentation {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  code        String   @unique // 6位简短代码，用于听众加入演讲
+  startTime   DateTime
+  endTime     DateTime?
+  isActive    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Foreign keys
+  organizerId String
+  speakerId   String
+
+  // Relations
+  organizer User @relation("OrganizerPresentations", fields: [organizerId], references: [id])
+  speaker   User @relation("SpeakerPresentations", fields: [speakerId], references: [id])
+
+  audience     PresentationAudience[]
+  contents     PresentationContent[]
+  quizzes      Quiz[]
+  feedbacks    Feedback[]
+
+  @@map("presentations")
+}
+
+model PresentationAudience {
+  id             String @id @default(cuid())
+  presentationId String
+  userId         String
+  nickname       String?
+  joinedAt       DateTime @default(now())
+
+  // Relations
+  presentation Presentation @relation(fields: [presentationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+
+  @@unique([presentationId, userId])
+  @@map("presentation_audience")
+}
+
+model PresentationContent {
+  id             String   @id @default(cuid())
+  presentationId String
+  contentType    String   // 'text', 'pdf', 'ppt', 'audio', 'video'
+  originalName   String
+  filePath       String?
+  extractedText  String
+  timestamp      DateTime @default(now())
+
+  // Relations
+  presentation Presentation @relation(fields: [presentationId], references: [id])
+
+  @@map("presentation_contents")
+}
+
+model Quiz {
+  id             String     @id @default(cuid())
+  presentationId String
+  title          String
+  status         QuizStatus @default(DRAFT)
+  timeLimit      Int        @default(10) // seconds
+  startTime      DateTime?
+  endTime        DateTime?
+  createdAt      DateTime   @default(now())
+
+  // Relations
+  presentation Presentation   @relation(fields: [presentationId], references: [id])
+  questions    QuizQuestion[]
+  answers      QuizAnswer[]
+  discussion   Discussion?
+
+  @@map("quizzes")
+}
+
+model QuizQuestion {
+  id          String @id @default(cuid())
+  quizId      String
+  question    String
+  optionA     String
+  optionB     String
+  optionC     String
+  optionD     String
+  correctAnswer String // 'A', 'B', 'C', or 'D'
+  explanation String?
+  order       Int
+
+  // Relations
+  quiz    Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers QuizAnswer[]
+
+  @@map("quiz_questions")
+}
+
+model QuizAnswer {
+  id         String   @id @default(cuid())
+  quizId     String
+  questionId String
+  userId     String
+  answer     String   // 'A', 'B', 'C', or 'D'
+  isCorrect  Boolean
+  answeredAt DateTime @default(now())
+
+  // Relations
+  quiz     Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  question QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  user     User         @relation(fields: [userId], references: [id])
+
+  @@unique([questionId, userId])
+  @@map("quiz_answers")
+}
+
+model Feedback {
+  id             String       @id @default(cuid())
+  presentationId String
+  userId         String
+  type           FeedbackType
+  message        String?
+  createdAt      DateTime     @default(now())
+
+  // Relations
+  presentation Presentation @relation(fields: [presentationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+
+  @@map("feedbacks")
+}
+
+model Discussion {
+  id      String @id @default(cuid())
+  quizId  String @unique
+  isActive Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  quiz     Quiz                @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  comments DiscussionComment[]
+
+  @@map("discussions")
+}
+
+model DiscussionComment {
+  id           String   @id @default(cuid())
+  discussionId String
+  userId       String
+  message      String
+  createdAt    DateTime @default(now())
+
+  // Relations
+  discussion Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id])
+
+  @@map("discussion_comments")
+}
